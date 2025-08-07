@@ -7,7 +7,7 @@ from apscheduler.triggers.cron import CronTrigger
 from app.services.excel_report_service import excel_report_service
 from app.services.message_queue import message_queue
 from app.config import settings
-
+from typing import Dict, Any
 logger = logging.getLogger(__name__)
 
 class SchedulerService:
