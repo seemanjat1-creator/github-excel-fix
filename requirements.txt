@@ -26,3 +26,4 @@ apscheduler==3.10.4
 celery==5.3.4
 openpyxl==3.1.2
 xlsxwriter==3.1.9
+requests==2.31.0
