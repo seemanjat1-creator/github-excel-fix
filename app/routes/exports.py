@@ -221,7 +221,7 @@ async def trigger_export_now(
     """Manually trigger export for all workspaces (admin only)"""
     try:
         # Only allow global admins to trigger system-wide export
-        if not current_user.is_admin:
+        if not getattr(current_user, 'is_admin', False):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Only system administrators can trigger system-wide exports"

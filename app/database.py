@@ -39,6 +39,7 @@ async def create_indexes():
     try:
         # Users collection indexes
         await db.database.users.create_index("email", unique=True)
+        await db.database.users.create_index("is_admin")
         
         # Workspaces collection indexes
         await db.database.workspaces.create_index("admin_id")

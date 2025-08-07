@@ -104,6 +104,14 @@ export const DashboardPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-gray-600">Workspace: {currentWorkspace.name}</p>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-sm text-gray-500">Role:</span>
+            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+              isCurrentUserAdmin ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+            }`}>
+              {isCurrentUserAdmin ? 'Administrator' : 'Member'}
+            </span>
+          </div>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
@@ -210,11 +218,6 @@ export const DashboardPage: React.FC = () => {
                   }`}>
                     {phone.status}
                   </span>
-                  {isCurrentUserAdmin && (
-                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
-                      You
-                    </span>
-                  )}
                 </div>
               </div>
             ))}

@@ -27,12 +27,14 @@ class UserInDB(UserBase):
     created_at: datetime
     updated_at: datetime
     workspaces: List[str] = []
+    is_admin: bool = False
 
 class User(UserBase):
     id: str = Field(alias="_id")
     created_at: datetime
     updated_at: datetime
     workspaces: List[str] = []
+    is_admin: bool = False
 
 class UserLogin(BaseModel):
     email: EmailStr

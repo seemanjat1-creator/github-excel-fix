@@ -178,7 +178,7 @@ async def retry_failed_messages(
     """Retry all failed messages in the queue"""
     try:
         # Only allow admins to retry failed messages
-        if not current_user.is_admin:
+        if not getattr(current_user, 'is_admin', False):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Only administrators can retry failed messages"

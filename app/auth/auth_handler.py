@@ -83,6 +83,10 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         raise credentials_exception
     
     user_data["_id"] = str(user_data["_id"])
+    # Ensure is_admin field is included
+    if "is_admin" not in user_data:
+        user_data["is_admin"] = False
+    
     return User(**user_data)
 
 async def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
@@ -111,6 +115,11 @@ async def verify_workspace_access(user: User, workspace_id: str) -> bool:
 async def verify_workspace_admin(user: User, workspace_id: str) -> bool:
     """Verify if user is admin of workspace"""
     logger.info(f"Verifying admin access for user {user.id} in workspace {workspace_id}")
+    
+    # Check if user is global admin first
+    if getattr(user, 'is_admin', False):
+        logger.info(f"User {user.id} is global admin, granting workspace admin access")
+        return True
     
     db = get_database()
     workspace = await db.workspaces.find_one({"_id": ObjectId(workspace_id)})

@@ -21,6 +21,7 @@ interface User {
   role: string;
   is_active: boolean;
   is_admin: boolean;
+  is_admin: boolean;
 }
 
 // ✅ Auth context shape

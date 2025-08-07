@@ -43,12 +43,14 @@ async def add_phone_number(
 ):
     """Add new phone number to workspace"""
     logger.info(f"Add phone request from user {current_user.id} for workspace {phone_data.workspace_id}")
+    logger.info(f"User admin status: is_admin={getattr(current_user, 'is_admin', False)}")
     
     # Only workspace admins can add phone numbers
     is_admin = await verify_workspace_admin(current_user, phone_data.workspace_id)
     logger.info(f"Admin check result: {is_admin} for user {current_user.id} in workspace {phone_data.workspace_id}")
     
     if not is_admin:
+        logger.error(f"Access denied: User {current_user.id} (global_admin={getattr(current_user, 'is_admin', False)}) is not admin of workspace {phone_data.workspace_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Only workspace administrators can add phone numbers. User {current_user.id} is not admin of workspace {phone_data.workspace_id}"

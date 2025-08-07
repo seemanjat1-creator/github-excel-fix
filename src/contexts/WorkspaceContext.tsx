@@ -51,19 +51,30 @@ export const WorkspaceProvider: React.FC<WorkspaceProviderProps> = ({ children }
   // Check if current user is admin of current workspace
   const isCurrentUserAdmin = React.useMemo(() => {
     if (!currentWorkspace || !user) return false;
-    // Check if user is the workspace admin
-    const isAdmin = currentWorkspace.admin_id === user.id;
+    // Check if user is global admin OR workspace admin
+    const isGlobalAdmin = user.is_admin === true;
+    const isWorkspaceAdmin = currentWorkspace.admin_id === user.id;
+    const isAdmin = isGlobalAdmin || isWorkspaceAdmin;
     console.log('Admin check:', { 
       currentWorkspace: currentWorkspace.id, 
       adminId: currentWorkspace.admin_id, 
       userId: user.id, 
-      isAdmin 
+      isGlobalAdmin,
+      isWorkspaceAdmin,
+      isAdmin
     });
     return isAdmin;
   }, [currentWorkspace, user]);
 
   const checkAdminAccess = (workspaceId?: string) => {
     if (!user) return false;
+    
+    // Global admins have access to all workspaces
+    if (user.is_admin === true) {
+      console.log('Global admin access granted for user:', user.id);
+      return true;
+    }
+    
     const workspace = workspaceId 
       ? workspaces.find(w => w.id === workspaceId)
       : currentWorkspace;

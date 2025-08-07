@@ -64,12 +64,14 @@ async def register(user: UserCreate):
     existing_admins = await db.users.count_documents({"is_admin": True})
     if existing_admins == 0:
         user_dict["is_admin"] = True
+        logger.info(f"Making first user {user.email} a global admin")
     else:
         user_dict["is_admin"] = False
 
     result = await db.users.insert_one(user_dict)
     user_dict["_id"] = str(result.inserted_id)
     
+    logger.info(f"User registered: {user.email}, is_admin: {user_dict['is_admin']}")
     return User(**user_dict)
 
 @router.post("/login", response_model=Token)
@@ -93,6 +95,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 @router.get("/me", response_model=User)
 async def get_current_user_info(current_user: User = Depends(get_current_active_user)):
     """Get current user information"""
+    logger.info(f"User info request: {current_user.email}, is_admin: {getattr(current_user, 'is_admin', False)}")
     return current_user
 
 @router.get("/check-admin/{workspace_id}")
@@ -103,7 +106,12 @@ async def check_admin_access(
     """Check if user is admin of workspace"""
     from app.auth.auth_handler import verify_workspace_admin
     is_admin = await verify_workspace_admin(current_user, workspace_id)
-    return {"is_admin": is_admin, "user_id": current_user.id}
+    return {
+        "is_admin": is_admin, 
+        "user_id": current_user.id,
+        "is_global_admin": getattr(current_user, 'is_admin', False),
+        "workspace_id": workspace_id
+    }
 
 @router.post("/logout")
 async def logout():

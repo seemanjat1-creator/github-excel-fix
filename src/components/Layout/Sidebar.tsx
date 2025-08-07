@@ -56,7 +56,7 @@ export const Sidebar: React.FC = () => {
             <p className="text-sm font-medium truncate">{user?.full_name}</p>
             <div className="flex items-center gap-2">
               <p className="text-xs text-slate-400 truncate">{user?.email}</p>
-              {isCurrentUserAdmin && (
+              {(isCurrentUserAdmin || user?.is_admin) && (
                 <span className="bg-yellow-500 text-white px-2 py-0.5 rounded text-xs font-medium">
                   Admin
                 </span>

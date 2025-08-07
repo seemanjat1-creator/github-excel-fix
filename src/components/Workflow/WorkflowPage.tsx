@@ -154,27 +154,8 @@ export const WorkflowPage: React.FC = () => {
                 <p><strong>Required Role:</strong> Administrator</p>
                 <p><strong>User ID:</strong> {user?.id}</p>
                 <p><strong>Admin ID:</strong> {currentWorkspace?.admin_id}</p>
+                <p><strong>Is Global Admin:</strong> {user?.is_admin ? 'Yes' : 'No'}</p>
                 <p className="mt-2">Contact your workspace administrator to request changes to these settings.</p>
-                {user?.is_admin && (
-                  <div className="mt-4">
-                    <button
-                      onClick={async () => {
-                        try {
-                          await workspaceAPI.makeAdminOfAllWorkspaces();
-                          toast.success('You are now admin of all workspaces!');
-                          window.location.reload();
-                        } catch (error: any) {
-                          console.error('Error making admin:', error);
-                          const errorMessage = error.response?.data?.detail || 'Error making you admin';
-                          toast.error(errorMessage);
-                        }
-                      }}
-                      className="mt-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm"
-                    >
-                      Make Me Admin of All Workspaces
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
           </div>

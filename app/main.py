@@ -12,6 +12,7 @@ from app.routes import exports
 from app.services.message_queue import message_queue
 from app.services.scheduler_service import scheduler_service
 from app.services.export_scheduler import export_scheduler
+from app.services.migration_service import run_migrations
 import logging
 import uvicorn
 from contextlib import asynccontextmanager
@@ -33,6 +34,13 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting WhatsApp Automation Backend...")
     await connect_to_mongo()
+    
+    # Run database migrations
+    try:
+        await run_migrations()
+    except Exception as e:
+        logger.error(f"Migration failed: {e}")
+        # Don't fail startup for migration errors
     
     # Initialize message queue
     await message_queue.initialize()

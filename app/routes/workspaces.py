@@ -41,7 +41,7 @@ async def create_workspace(
 ):
     """Create new workspace (only global admins can create, and are always admin of the workspace).
     Also, make the current user admin of all existing workspaces if they are global admin."""
-    if not current_user.is_admin:
+    if not getattr(current_user, 'is_admin', False):
         raise HTTPException(
             status_code=403,
             detail="Only global admin users can create workspaces."
@@ -77,7 +77,7 @@ async def make_current_user_admin_of_all_workspaces(
     current_user: User = Depends(get_current_active_user)
 ):
     """Make current user admin of all workspaces (for global admins only)"""
-    if not current_user.is_admin:
+    if not getattr(current_user, 'is_admin', False):
         raise HTTPException(
             status_code=403,
             detail="Only global admin users can perform this action."
@@ -139,12 +139,14 @@ async def update_workspace(
 ):
     """Update workspace (admin only)"""
     logger.info(f"Update workspace request from user {current_user.id} for workspace {workspace_id}")
+    logger.info(f"User admin status: is_admin={getattr(current_user, 'is_admin', False)}")
     
     # Only workspace admins can update settings
     is_admin = await verify_workspace_admin(current_user, workspace_id)
     logger.info(f"Admin check result: {is_admin} for user {current_user.id} in workspace {workspace_id}")
     
     if not is_admin:
+        logger.error(f"Access denied: User {current_user.id} (global_admin={getattr(current_user, 'is_admin', False)}) is not admin of workspace {workspace_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Only workspace administrators can update workspace settings. User {current_user.id} is not admin of workspace {workspace_id}"
